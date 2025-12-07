@@ -35,5 +35,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnEnChangeEdit1();
-	CMyEdit m_edit;
+	MyEdit m_edit;
 };

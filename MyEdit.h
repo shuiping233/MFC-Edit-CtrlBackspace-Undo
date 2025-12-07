@@ -34,7 +34,7 @@ public:
 
 extern CCMyEditApp theApp;
 
-class CMyEdit : public CEdit
+class MyEdit : public CEdit
 {
 public:
     BOOL PreTranslateMessage(MSG* pMsg) override;

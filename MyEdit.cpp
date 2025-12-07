@@ -15,7 +15,7 @@ static bool IsDelimiter(wchar_t ch)
 }
 
 // 记录快照
-void CMyEdit::PushSnapshot()
+void MyEdit::PushSnapshot()
 {
     CStringW txt;
     GetWindowText(txt);
@@ -35,7 +35,7 @@ void CMyEdit::PushSnapshot()
 }
 
 // 撤销
-void CMyEdit::Undo()
+void MyEdit::Undo()
 {
     if (m_histIndex > 0)
     {
@@ -46,7 +46,7 @@ void CMyEdit::Undo()
 }
 
 // 重做
-void CMyEdit::Redo()
+void MyEdit::Redo()
 {
     if (m_histIndex + 1 < m_history.size())
     {
@@ -56,7 +56,7 @@ void CMyEdit::Redo()
     }
 }
 
-BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
+BOOL MyEdit::PreTranslateMessage(MSG* pMsg)
 {
     // 1. Ctrl+Backspace 删除单词
     if (pMsg->message == WM_KEYDOWN &&
@@ -112,7 +112,7 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
 }
 
 // 新增成员函数
-void CMyEdit::OnEnUpdate()
+void MyEdit::OnEnUpdate()
 {
     if (m_bInUpdate) return;     // 递归保护
     m_bInUpdate = TRUE;
@@ -121,6 +121,6 @@ void CMyEdit::OnEnUpdate()
 }
 
 
-BEGIN_MESSAGE_MAP(CMyEdit, CEdit)
-    ON_CONTROL_REFLECT(EN_UPDATE, &CMyEdit::OnEnUpdate)
+BEGIN_MESSAGE_MAP(MyEdit, CEdit)
+    ON_CONTROL_REFLECT(EN_UPDATE, &MyEdit::OnEnUpdate)
 END_MESSAGE_MAP()
