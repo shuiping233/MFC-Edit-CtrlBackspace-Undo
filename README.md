@@ -1,4 +1,6 @@
 ﻿# CMyEdit
+本项目基于vs2026创建,使用vs2026打开`CMyEdit.slnx`即可打开项目
+
 给`Edit Control` 添加 `ctrl`+`backspace` 删除单词功能,并提供了可能更优的的undo实现
 - 是通过实现一个 `Edit Control` 子类来实现上述功能的
 - `ctrl`+`backspace`删除光标前的一个单词,目前仅支持以英文符号作为分隔符,未考虑utf-8和Unicode字符
