@@ -1,11 +1,11 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "MyEdit.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-// ÅĞ¶ÏÊÇ·ñÎª·Ö¸ô·û£¨Ó¢ÎÄ·ûºÅ£©
+// åˆ¤æ–­æ˜¯å¦ä¸ºåˆ†éš”ç¬¦ï¼ˆè‹±æ–‡ç¬¦å·ï¼‰
 static bool IsDelimiter(wchar_t ch)
 {
     return ch == L' ' || ch == L',' || ch == L'.' || ch == L';' ||
@@ -14,36 +14,36 @@ static bool IsDelimiter(wchar_t ch)
         ch == L']' || ch == L'{' || ch == L'}';
 }
 
-// ¼ÇÂ¼¿ìÕÕ
+// è®°å½•å¿«ç…§
 void CMyEdit::PushSnapshot()
 {
     CStringW txt;
     GetWindowText(txt);
     std::wstring s(txt);
     if (m_histIndex < m_history.size() && m_history[m_histIndex] == s)
-        return; // Ã»±ä»¯£¬²»ÖØ¸´¼ÇÂ¼
-    m_history.resize(m_histIndex + 1);          // ÈÓµôºóÃæµÄ
+        return; // æ²¡å˜åŒ–ï¼Œä¸é‡å¤è®°å½•
+    m_history.resize(m_histIndex + 1);          // æ‰”æ‰åé¢çš„
     m_history.push_back(s);
-    if (m_history.size() > MAX_HIST)            // ³¬ÉÏÏŞ£¬¶ªÆú×î¾É
+    if (m_history.size() > MAX_HIST)            // è¶…ä¸Šé™ï¼Œä¸¢å¼ƒæœ€æ—§
         m_history.erase(m_history.begin());
     else
         ++m_histIndex;
 }
 
-// ³·Ïú
+// æ’¤é”€
 void CMyEdit::Undo()
 {
     if (m_histIndex > 0)
     {
         --m_histIndex;
         SetWindowTextW(m_history[m_histIndex].c_str());
-        SetSel(0, -1);        // È«Ñ¡£¬·½±ã¼ÌĞøÊäÈë
+        SetSel(0, -1);        // å…¨é€‰ï¼Œæ–¹ä¾¿ç»§ç»­è¾“å…¥
     }
 }
 
 BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
 {
-    // 1. Ctrl+Backspace É¾³ıµ¥´Ê
+    // 1. Ctrl+Backspace åˆ é™¤å•è¯
     if (pMsg->message == WM_KEYDOWN &&
         pMsg->wParam == VK_BACK &&
         (GetKeyState(VK_CONTROL) & 0x8000))
@@ -52,15 +52,15 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
         GetWindowText(txt);
         int a, b;
         GetSel(a, b);
-        if (a != b) return FALSE;   // ÓĞÑ¡Çø£¬ÏµÍ³´¦Àí
+        if (a != b) return FALSE;   // æœ‰é€‰åŒºï¼Œç³»ç»Ÿå¤„ç†
 
-        PushSnapshot();             // ÏÈ¼ÇÂ¼£¬·½±ã³·Ïú
+        PushSnapshot();             // å…ˆè®°å½•ï¼Œæ–¹ä¾¿æ’¤é”€
 
         int p = a;
-        // Ìø¹ı×ó²àÁ¬Ğø·Ö¸ô·û£¨±£Áô£©
+        // è·³è¿‡å·¦ä¾§è¿ç»­åˆ†éš”ç¬¦ï¼ˆä¿ç•™ï¼‰
         while (p > 0 && IsDelimiter(txt[p - 1]))
             --p;
-        // ÔÙÌø¹ıµ¥´Ê
+        // å†è·³è¿‡å•è¯
         while (p > 0 && !IsDelimiter(txt[p - 1]))
             --p;
         if (p < a)
@@ -68,11 +68,11 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
             txt.Delete(p, a - p);
             SetWindowText(txt);
             SetSel(p, p);
-            return TRUE;            // ³ÔµôÏûÏ¢
+            return TRUE;            // åƒæ‰æ¶ˆæ¯
         }
     }
 
-    // 2. Ctrl+Z ³·Ïú
+    // 2. Ctrl+Z æ’¤é”€
     if (pMsg->message == WM_KEYDOWN &&
         pMsg->wParam == 'Z' &&
         (GetKeyState(VK_CONTROL) & 0x8000))
@@ -84,12 +84,12 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
     return CEdit::PreTranslateMessage(pMsg);
 }
 
-// ĞÂÔö³ÉÔ±º¯Êı
+// æ–°å¢æˆå‘˜å‡½æ•°
 void CMyEdit::OnEnUpdate()
 {
-    if (m_bInUpdate) return;     // µİ¹é±£»¤
+    if (m_bInUpdate) return;     // é€’å½’ä¿æŠ¤
     m_bInUpdate = TRUE;
-    PushSnapshot();              // ÕæÕıĞŞ¸ÄÇ°ÅÄÕÕ
+    PushSnapshot();              // çœŸæ­£ä¿®æ”¹å‰æ‹ç…§
     m_bInUpdate = FALSE;
 }
 
