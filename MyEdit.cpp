@@ -83,3 +83,17 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
 
     return CEdit::PreTranslateMessage(pMsg);
 }
+
+// 新增成员函数
+void CMyEdit::OnEnUpdate()
+{
+    if (m_bInUpdate) return;     // 递归保护
+    m_bInUpdate = TRUE;
+    PushSnapshot();              // 真正修改前拍照
+    m_bInUpdate = FALSE;
+}
+
+
+BEGIN_MESSAGE_MAP(CMyEdit, CEdit)
+    ON_CONTROL_REFLECT(EN_UPDATE, &CMyEdit::OnEnUpdate)
+END_MESSAGE_MAP()

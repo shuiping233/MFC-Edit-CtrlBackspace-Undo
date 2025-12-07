@@ -39,6 +39,10 @@ class CMyEdit : public CEdit
 public:
     BOOL PreTranslateMessage(MSG* pMsg) override;
 
+protected:
+    afx_msg void OnEnUpdate();   // 反射通知
+    DECLARE_MESSAGE_MAP()        // 声明消息映射
+
 private:
     void PushSnapshot();               // 记录当前文本
     void Undo();                       // 回退一次
@@ -46,6 +50,7 @@ private:
     std::vector<std::wstring> m_history;
     size_t m_histIndex = 0;            // 当前所在历史位置
     static constexpr size_t MAX_HIST = 5;
+    BOOL m_bInUpdate = FALSE;   // 防止递归
 
 };
 
