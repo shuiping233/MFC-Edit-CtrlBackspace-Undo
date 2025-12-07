@@ -20,14 +20,18 @@ void CMyEdit::PushSnapshot()
     CStringW txt;
     GetWindowText(txt);
     std::wstring s(txt);
-    if (m_histIndex < m_history.size() && m_history[m_histIndex] == s)
-        return; // 没变化，不重复记录
-    m_history.resize(m_histIndex + 1);          // 扔掉后面的
-    m_history.push_back(s);
-    if (m_history.size() > MAX_HIST)            // 超上限，丢弃最旧
+    // 如果当前不在尾部，先截掉后面分支
+    if (m_histIndex + 1 < m_history.size())
+        m_history.erase(m_history.begin() + m_histIndex + 1,
+            m_history.end());
+    // 重复内容不记录
+    if (!m_history.empty() && m_history.back() == s)
+        return;
+
+    m_history.emplace_back(s);
+    if (m_history.size() > MAX_HIST)
         m_history.erase(m_history.begin());
-    else
-        ++m_histIndex;
+    m_histIndex = m_history.size() - 1;
 }
 
 // 撤销
@@ -38,6 +42,17 @@ void CMyEdit::Undo()
         --m_histIndex;
         SetWindowTextW(m_history[m_histIndex].c_str());
         SetSel(0, -1);        // 全选，方便继续输入
+    }
+}
+
+// 重做
+void CMyEdit::Redo()
+{
+    if (m_histIndex + 1 < m_history.size())
+    {
+        ++m_histIndex;
+        SetWindowTextW(m_history[m_histIndex].c_str());
+        SetSel(0, -1);
     }
 }
 
@@ -81,6 +96,15 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
         (GetKeyState(VK_CONTROL) & 0x8000))
     {
         Undo();
+        return TRUE;
+    }
+
+    // 3. Ctrl+Y 恢复
+    if (pMsg->message == WM_KEYDOWN &&
+        pMsg->wParam == 'Y' &&
+        (GetKeyState(VK_CONTROL) & 0x8000))
+    {
+        Redo();
         return TRUE;
     }
 

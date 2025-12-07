@@ -46,11 +46,13 @@ protected:
 private:
     void PushSnapshot();               // 记录当前文本
     void Undo();                       // 回退一次
+    void Redo();                       // 重做一次
 
     std::vector<std::wstring> m_history;
     size_t m_histIndex = 0;            // 当前所在历史位置
     static constexpr size_t MAX_HIST = 50;
     BOOL m_bInUpdate = FALSE;   // 防止递归
+    BOOL m_bUserEdit = TRUE;    // TRUE 表示“用户造成的改变”
 
 };
 
