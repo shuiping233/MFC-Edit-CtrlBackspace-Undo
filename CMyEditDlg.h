@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include "CMyEdit.h"
+#include "MyEdit.h"
 
 // CCMyEditDlg 对话框
 class CCMyEditDlg : public CDialogEx

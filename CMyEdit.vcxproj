@@ -183,7 +183,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CMyEdit.h" />
+    <ClInclude Include="MyEdit.h" />
     <ClInclude Include="CMyEditDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />

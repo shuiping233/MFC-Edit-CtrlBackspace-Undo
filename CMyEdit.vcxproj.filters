@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CMyEdit.h">
+    <ClInclude Include="MyEdit.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CMyEditDlg.h">

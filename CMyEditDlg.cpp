@@ -4,10 +4,9 @@
 
 #include "pch.h"
 #include "framework.h"
-#include "CMyEdit.h"
+#include "MyEdit.h"
 #include "CMyEditDlg.h"
 #include "afxdialogex.h"
-#include "CMyEdit.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

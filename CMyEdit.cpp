@@ -4,7 +4,7 @@
 
 #include "pch.h"
 #include "framework.h"
-#include "CMyEdit.h"
+#include "MyEdit.h"
 #include "CMyEditDlg.h"
 
 #ifdef _DEBUG
