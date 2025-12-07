@@ -50,6 +50,9 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
     {
         CStringW txt;
         GetWindowText(txt);
+        if (txt.IsEmpty())          // ← 空文本框直接屏蔽
+            return TRUE;
+
         int a, b;
         GetSel(a, b);
         if (a != b) return FALSE;   // 有选区，系统处理
