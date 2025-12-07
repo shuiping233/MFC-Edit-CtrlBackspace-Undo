@@ -19,16 +19,17 @@ void CMyEdit::PushSnapshot()
 {
     CStringW txt;
     GetWindowText(txt);
-    std::wstring s(txt);
-    // 如果当前不在尾部，先截掉后面分支
+    int start, end;
+    GetSel(start, end);
+    // 如果本身有选区，我们按“起点”当光标
+    int cur = (start == end) ? start : start;
+
+    // 截断分支
     if (m_histIndex + 1 < m_history.size())
         m_history.erase(m_history.begin() + m_histIndex + 1,
             m_history.end());
-    // 重复内容不记录
-    if (!m_history.empty() && m_history.back() == s)
-        return;
 
-    m_history.emplace_back(s);
+    m_history.push_back({ txt.GetString(), cur });
     if (m_history.size() > MAX_HIST)
         m_history.erase(m_history.begin());
     m_histIndex = m_history.size() - 1;
@@ -40,8 +41,11 @@ void CMyEdit::Undo()
     if (m_histIndex > 0)
     {
         --m_histIndex;
-        SetWindowTextW(m_history[m_histIndex].c_str());
-        SetSel(0, -1);        // 全选，方便继续输入
+        m_bUserEdit = FALSE;
+        const auto& snap = m_history[m_histIndex];
+        SetWindowTextW(snap.text.c_str());
+        SetSel(snap.cursor, snap.cursor);   // ← 关键：光标也还原
+        m_bUserEdit = TRUE;
     }
 }
 
@@ -51,8 +55,11 @@ void CMyEdit::Redo()
     if (m_histIndex + 1 < m_history.size())
     {
         ++m_histIndex;
-        SetWindowTextW(m_history[m_histIndex].c_str());
-        SetSel(0, -1);
+        m_bUserEdit = FALSE;
+        const auto& snap = m_history[m_histIndex];
+        SetWindowTextW(snap.text.c_str());
+        SetSel(snap.cursor, snap.cursor);
+        m_bUserEdit = TRUE;
     }
 }
 
@@ -90,7 +97,23 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
         }
     }
 
-    // 2. Ctrl+Z 撤销
+    // 2 普通 Backspace 删除
+    if (pMsg->message == WM_KEYDOWN &&
+        pMsg->wParam == VK_BACK &&
+        !(GetKeyState(VK_CONTROL) & 0x8000))
+    {
+        int a, b;
+        GetSel(a, b);
+
+        // 只有有内容可删才记录
+        if (a > 0 || b > 0)
+        {
+            PushSnapshot();  // 删除前记录
+        }
+        return FALSE;  // 让系统处理，EN_UPDATE 会再记录一次
+    }
+
+    // 3. Ctrl+Z 撤销
     if (pMsg->message == WM_KEYDOWN &&
         pMsg->wParam == 'Z' &&
         (GetKeyState(VK_CONTROL) & 0x8000))
@@ -99,7 +122,7 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
         return TRUE;
     }
 
-    // 3. Ctrl+Y 恢复
+    // 4. Ctrl+Y 恢复
     if (pMsg->message == WM_KEYDOWN &&
         pMsg->wParam == 'Y' &&
         (GetKeyState(VK_CONTROL) & 0x8000))
@@ -108,15 +131,26 @@ BOOL CMyEdit::PreTranslateMessage(MSG* pMsg)
         return TRUE;
     }
 
+    // 5. 普通字符输入（可打印键）也先拍快照，再交给系统
+    if (pMsg->message == WM_CHAR && pMsg->wParam >= 0x20)
+    {
+        // 只记录“用户真正想输入”的可见字符
+        PushSnapshot();
+        // 不拦截，返回 FALSE 让系统继续处理
+    }
+
     return CEdit::PreTranslateMessage(pMsg);
 }
 
-// 新增成员函数
+
 void CMyEdit::OnEnUpdate()
 {
-    if (m_bInUpdate) return;     // 递归保护
+    if (m_bInUpdate) return;
     m_bInUpdate = TRUE;
-    PushSnapshot();              // 真正修改前拍照
+
+    if (m_bUserEdit)
+        PushSnapshot();  // 恢复这一行！
+
     m_bInUpdate = FALSE;
 }
 

@@ -5,7 +5,7 @@
 #pragma once
 
 #ifndef __AFXWIN_H__
-	#error "在包含此文件之前包含 'pch.h' 以生成 PCH"
+#error "在包含此文件之前包含 'pch.h' 以生成 PCH"
 #endif
 
 #include "resource.h"		// 主符号
@@ -21,18 +21,26 @@
 class CCMyEditApp : public CWinApp
 {
 public:
-	CCMyEditApp();
+    CCMyEditApp();
 
-// 重写
+    // 重写
 public:
-	virtual BOOL InitInstance();
+    virtual BOOL InitInstance();
 
-// 实现
+    // 实现
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 };
 
 extern CCMyEditApp theApp;
+
+
+struct Snapshot
+{
+    std::wstring text;
+    int cursor;
+};
+
 
 class CMyEdit : public CEdit
 {
@@ -48,11 +56,11 @@ private:
     void Undo();                       // 回退一次
     void Redo();                       // 重做一次
 
-    std::vector<std::wstring> m_history;
+    std::vector<Snapshot> m_history;
     size_t m_histIndex = 0;            // 当前所在历史位置
     static constexpr size_t MAX_HIST = 50;
     BOOL m_bInUpdate = FALSE;   // 防止递归
-    BOOL m_bUserEdit = TRUE;    // TRUE 表示“用户造成的改变”
+    BOOL m_bUserEdit = TRUE;   // TRUE 表示“用户造成的改变”
 
 };
 
