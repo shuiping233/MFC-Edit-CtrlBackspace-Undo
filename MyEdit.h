@@ -49,7 +49,7 @@ private:
 
     std::vector<std::wstring> m_history;
     size_t m_histIndex = 0;            // 当前所在历史位置
-    static constexpr size_t MAX_HIST = 5;
+    static constexpr size_t MAX_HIST = 50;
     BOOL m_bInUpdate = FALSE;   // 防止递归
 
 };
