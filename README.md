@@ -1,5 +1,5 @@
 ﻿# CMyEdit
-本项目基于vs2026创建,使用vs2026打开`CMyEdit.slnx`即可打开项目
+本项目基于vs2026创建,使用vs2026/vs2022打开`CMyEdit.slnx`/`CMyEdit.sln`即可打开项目,需要安装`MSVC v143 - VS 2022 C++ x64/x86 生成工具`
 随手问ai,5分钟拼出来的,代码质量非常差,请见谅(
 
 给`Edit Control` 添加 `ctrl`+`backspace` 删除单词功能,并提供了可能更优的的undo和redo实现
