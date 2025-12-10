@@ -116,6 +116,18 @@ void MyEdit::OnEnUpdate()
 {
     if (m_bInUpdate) return;     // 递归保护
     m_bInUpdate = TRUE;
+
+    // 干掉 Ctrl+Backspace 产生的 0x7F （ASCII 127）
+    CStringW txt;
+    GetWindowText(txt);
+    if (txt.Replace(L"\x7F", L""))   
+    {
+        SetWindowText(txt);         
+        SetSel(txt.GetLength(), txt.GetLength()); // 光标放末尾
+        m_bInUpdate = FALSE;
+        return;                      // 已经处理完，不再拍照
+    }
+
     PushSnapshot();              // 真正修改前拍照
     m_bInUpdate = FALSE;
 }
